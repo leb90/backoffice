@@ -87,25 +87,28 @@ router.post('/login', function(req, res, next) {
             });
 
         }
-        if (!user) {
-            return
+        if (!user.length) {
             res.status(500)
             res.json({
                 "msg": "Error"
             });
-        }
-        var tokenData = {
-            token : crypto.randomBytes(16).toString('hex')
+        } else {
+            var tokenData = {
+                user_id: user[0].id,
+                token: crypto.randomBytes(16).toString('hex')
+            }
+
+            userToken.push(tokenData);
+
+            res.send(tokenData, {
+                msj: 'Sign In',
+            });
+            console.log(userToken)
         }
 
-        userToken.push(tokenData);
-
-        res.send(tokenData, {
-            msj: 'Sign In',
-        });
-        console.log(userToken)
     });
 });
+
 
 
 module.exports = router

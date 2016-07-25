@@ -1,7 +1,6 @@
 var connection = require('./connection.js');
 
 var userModel = {};
-var userToken = {};
 
 userModel.getUsers = function(callback) {
     if (connection) {
