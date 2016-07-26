@@ -159,10 +159,11 @@ router.post('/login', function (req, res, next) {
             userToken.push(tokenData);
 
             res.send({
-                token: userToken[0].tokens[0].token,
+                user_id: tokenData.user_id,
+                token: tokenData.tokens[0].token,
                 msj: 'Sign In',
             });
-            console.log(userToken[0].tokens)
+            console.log(tokenData.tokens[0].token)
         }
 
     });
