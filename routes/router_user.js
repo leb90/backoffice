@@ -6,14 +6,31 @@ var nodemailer = require('nodemailer');
 var fs = require('fs');
 var cookieParser = require('cookie-parser')
 var cron = require('node-cron');
+var expires = require('expires');
+
 
 var userToken = [];
+var timestamp = expires.after('2 days');
+
+// Setup once
+var options = {
+    weekday: 'long',
+    month: 'short',
+    year: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+},
+intlDate = new Intl.DateTimeFormat( undefined, options );
+
+
+
+
 
 router.get('/test', function (req, res) {
+console.log( intlDate.format(timestamp) );
 
-    cron.schedule('10 * * * * * *', function () {
-        console.log('running every minute to 1 from 5');
-    });
 });
 
 router.get("/user/:id", function (req, res) {
@@ -103,44 +120,46 @@ router.post('/login', function (req, res, next) {
             });
 
         } else {
-            var tokenData = {
-                user_id: user[0].id,
-                token: crypto.randomBytes(16).toString('hex')
-            }
-
-            var obj = _.find(userToken, function (o) {
-                return o && o.user_id == user[0].id;
-            })
-
-            if (obj) {
-                obj.tokens.push(tokenData);
-            }
-            else {
-                var asd = {
-                    user_id: user[0].id,
-                    tokens: [tokenData]
-                };
-            }
-
-
-
+          //  var token = tokenHelper.generateToken();
+//pasar a funcion helper
             var tokenData = {
                 user_id: user[0].id,
                 tokens: [{
                     token: crypto.randomBytes(16).toString('hex'),
-                    expiration_date: "aca la fecha"
+                    expiration_date: intlDate.format(timestamp)
                 }]
-            };
+            }
 
-            var token = {
-                token: crypto.randomBytes(16).toString('hex'),
-                expiration_date: "aca la fecha"
-            };
-            obj.tokens.push(token);
+            // var obj = _.find(userToken, function (o) {
+            //     return o && o.user_id == user[0].id;
+            // })
+
+            // if (obj) {
+            //     obj.tokens.push(token);
+            // }
+            // else {
+            //     var asd = {
+            //         user_id: user[0].id,
+            //         tokens: [token]
+            //     };
+            // }
+
+
+
+         //   var tokenData = {
+           //     user_id: user[0].id,
+             //   tokens: [{
+               //     token: crypto.randomBytes(16).toString('hex'),
+                 //   expiration_date: intlDate.format(timestamp)
+               // }]
+           // };
+
+          //  obj.tokens.push(token);
 
             userToken.push(tokenData);
 
-            res.send(tokenData, {
+            res.send({
+                token: tokenData,
                 msj: 'Sign In',
             });
             console.log(userToken)
